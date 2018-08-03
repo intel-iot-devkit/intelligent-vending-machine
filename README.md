@@ -1,10 +1,49 @@
-# Path to Product - Intelligent Vending Machine
+# Reference Implementation: Intelligent Vending Machine
+## What it Does
 
 This guide demonstrates a rapid path-to-product IoT solution for retail using cloud data analytics. This proof of concept was created using the UP Squared* Grove* IoT Development Kit that was scaled to an industrial solution using an UP²* board, industrial sensors, Intel® System Studio, and Microsoft Azure* cloud services. This solution monitors the inventory, product sales, and maintenance of a vending machine.
 
-## Setup The System Hardware
+## How it Works
+The intelligent vending machine solution uses sensors connected to the UP Squared board, sample code, and the Intel® System Studio running on a Linux* operating system. The development and runtime environment is setup using Linux* and Intel® System Studio on a desktop or laptop. Events are monitored to see whether the intelligent vending machine was opened or closed. The temperature is read using the temperature sensor and events are sent based on temperature status (too high, too low or returned to normal). The sample code includes enabling the stepper motor, setting the speed for the motor and dispensing the product. The LCD display writes out to the screen when the product is being dispensed. 
 
-This section describes how to set up all the required hardware for the Intelligent Vending Machine: UP Squared\* and Grove Sensors
+## Requirements
+
+### Hardware
+
+- UP Squared* board with Grove* Pi+
+
+- LCD Display
+
+- Sensors
+   * Stepper Motor
+   * Temperature Sensor
+   * Red LED
+   * Green LED
+   * Touch Sensor
+   * Button
+   * Stepper Driver
+   
+- HDMI* or VGA port
+
+- USB Keyboard
+
+- Ethernet Cable
+
+### Software
+
+- Ubuntu* 16.04
+
+- Intel® System Studio
+
+- Node.js
+
+- MongoDB*
+
+- Compass
+
+## Setup
+
+This section describes how to set up all the required hardware for the Intelligent Vending Machine: UP Squared\* and Grove Sensors.
 
 Setting up the UP² board for this solution consists of the following steps:
 
@@ -34,23 +73,23 @@ Setting up the UP² board for this solution consists of the following steps:
 	*Figure 1. Sensors and pin connections.*
 
 
-## Install and Configure the Required Software
+### Install and Configure the Required Software
 
 This section gives instructions for: installation of the operating system, connecting the UP² board to the Internet, installing required software libraries, and finally cloning the project sources from a GitHub\* repository.
 	
-### Installing the OS: Ubuntu\* Server
+#### Installing the OS: Ubuntu\* Server
 	
-The UP Squared board comes with a preinstalled version of the Ubuntu* 16.04 operating system. Follow the instruction mentioned [here](https://www.ubuntu.com/download/iot/up-squared-iot-grove-server) to install Ubuntu on a UP² board, if not already installed.
+The UP Squared board comes with a preinstalled version of the Ubuntu* 16.04 operating system. Follow the instructions [here](https://www.ubuntu.com/download/iot/up-squared-iot-grove-server) to install Ubuntu on a UP² board, if not already installed.
 
-### Connecting the UP² to the Internet
+#### Connecting the UP² to the Internet
 
 This section describes how to connect the UP² board to your network, which will enable you to deploy and run the project from a different host on the same network (i.e. your laptop). Internet access is required in order to download the additional software libraries and the project code.
 
 The following sections describe the commands that need to be entered into a terminal (shell) on the UP² board:
 
-#### Ethernet
+##### Ethernet
 
- 1. Once Ubuntu is installed, restart the UP² board and login using your user.
+ 1. Once Ubuntu is installed, restart the UP² board and login using your user account.
  2. Type in the command `ifconfig` and find the interface named `enp3s0` in the list. In some cases, this might show up as `eth0` instead. Use the name displayed here for the following step.
  3. Open the network interface file using the command: `vim /etc/network/interfaces` and the following lines to it:
  
@@ -60,10 +99,10 @@ The following sections describe the commands that need to be entered into a term
     ```
 
  4. Save and exit the file and restart the network service using the following command: `/etc/init.d/networking restart`.
- 5. If you are connecting to external networks via a proxy, you will have to set it up as well.
+ 5. If you are connecting to external networks via a proxy, you will need to set it up as well.
 
 
-#### Installing the MRAA, UPM and sqlite3 libraries on the UP²\* Board
+##### Installing the MRAA, UPM and sqlite3 libraries on the UP²\* Board
 
  In order to put UPM and MRAA on your system, you can just use MRAA:PPA to update the libraries. The instructions are as follows:
 
@@ -74,16 +113,16 @@ sudo apt-get install libupm-dev libupm-java python-upm python3-upm node-upm upm-
 sudo apt-get install sqlite3 libsqlite3-dev
 ```
 
-**Note:** Now we can disconnect monitor and keyboard from UP² board, as we can remote acces UP² board using its IP address, which needs our Laptop/Desktop to be on the same network as UP² board.
+**Note:** Now we can disconnect monitor and keyboard from UP² board, as we can remote access UP² board using its IP address, which needs our Laptop/Desktop to be on the same network as UP² board.
 
-## Create the Development and Runtime Environment on Desktop/Laptop
+### Create the Development and Runtime Environment on Desktop/Laptop
 
 #### Linux\* Installation
  1. Download Intel® System Studio from [https://software.intel.com/en-us/system-studio](https://software.intel.com/en-us/system-studio) and extract.
- 2. Open a new Terminal window and navigate to the directory you extracted the contents of the installer file to.
+ 2. Open a new terminal window and navigate to the directory you extracted the contents of the installer file to.
  3. Run `install.sh` script and follow the instructions provided there to install Intel® System Studio.
 
-### Add the Solution to Intel® System Studio
+#### Add the Solution to Intel® System Studio
 
 This section gives the steps to add the solution to Intel® System Studio, including creating a new project and populating it with the files needed to build and run it.
 
@@ -108,20 +147,18 @@ This section gives the steps to add the solution to Intel® System Studio, inclu
  	*Figure 4. Adding Project Name.*
 
 
+ 4. To copy the code from the control application directory to the new project source folder perform the following:
+ * Copy over the `control-app.cpp` from control-application directory into the new project's src folder in Intel® System Studio 
+ * Next right click on the project name and follow the sequence: Properties > C/C++ Build > Settings > GNU 64-bit G++ Linker > Libraries and then Add libraries: mraa, upm-uln200xa, sqlite3, upm-jhd1313m1, upm-grove. This can be done by clicking on the small green '+' icon on the top right side of the libraries view.
 
- 4. 
-   * Copy over the `control-app.cpp` from control-application directory into the new project's src folder in Intel® System Studio 
-   * Next right click on the project name and follow the sequence: Properties > C/C++ Build > Settings > GNU 64-bit G++ Linker > Libraries and then Add libraies: mraa, upm-uln200xa, sqlite3, upm-jhd1313m1, upm-grove. This can be done by clicking on the small green '+' icon on the top right side of the libraries view
-
-	![Figure 5](./images/libraries.png)
-  
- 	*Figure 5. Adding libraries to the build path*
+ ![Figure 5](./images/libraries.png)
+  *Figure 5. Adding libraries to the build path*
 
 
  5. In order to run this project, connect to the UP² board first using the IP address already provided. Follow the instructions provided in [https://software.intel.com/en-us/developing-projects-with-intel-system-studio-c-creating-an-ssh-connection](https://software.intel.com/en-us/developing-projects-with-intel-system-studio-c-creating-an-ssh-connection) to connect to the UP² board as root (root privileges are required to use pins on board).
 
  6. Before running the project we need to copy and run a Node.js\* script which communicates with the Cloud. 
-   * azure-storage and sqlite3 node packages are required:  Install using: `npm install azure-storage sqlite3`.
+ * azure-storage and sqlite3 node packages are required:  Install using: `npm install azure-storage sqlite3`.
 
    Copy the Cloud folder on the UP² board using scp command from your desktop/laptop: 
    `scp -r /home/ubuntu/intelligent-vending-machine/Cloud   upsquared@###.###.###.###:/home/upsquared/`
@@ -141,11 +178,11 @@ Requirements: Node.js, npm, MongoDB\*, compass (Sass-based Stylesheet Framework 
 
 2. Go to admin-customer-application folder. Run script using: `sh build.sh`
 	
-  **Note:**   If behind proxy modify build.sh accordingly.
+  **Note:**   If behind a proxy modify build.sh accordingly.
 
 3. Run server: `./server/bin/www`
 
-4. In the browser goto `http://localhost:9000` to open the webapp. 
+4. In the browser, goto `http://localhost:9000` to open the webapp. 
    Enter MAC address of UP² in the textbox provided and click **Start**, it will open admin app.
    To open customer mobile app Navigate to `http://localhost:9000/#/mobile` 
    
